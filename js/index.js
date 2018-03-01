@@ -74,6 +74,13 @@ class Hero extends BaseChacter{
     super.getHurt(damage);
     this.updateHtml(this.hpElement, this.hurtElement);
   }
+  heal(){
+    this.hp += 30 ;
+    if (this.hp > this.maxHp){
+      this.hp = this.maxHp;
+    }
+    this.updateHtml(this.hpElement, this.hurtElement);
+  }
 }
 // 設定怪物屬性
 class Monster extends BaseChacter{
@@ -139,6 +146,39 @@ function heroAttack(){
   },1100);
 }
 
+function addHealEvent(){
+  var heal = document.getElementById("heal");
+  heal.onclick = function(){
+    heroHeal();
+  }
+}
+addHealEvent();
+
+function heroHeal(){
+  document.getElementsByClassName("skill-block")[0].style.display = "none";
+  setTimeout(function(){
+    hero.heal();
+  },100);
+
+  setTimeout(function(){
+    if(monster.alive){
+      monster.element.classList.add("attacking");
+      setTimeout(function(){
+        monster.attack(hero);
+        monster.element.classList.remove("attacking");
+        endTurn();
+        if (hero.alive == false){
+          finish()
+        }else{
+          document.getElementsByClassName("skill-block")[0].style.display = "block";
+        }
+      },500);
+    }else{
+      finish()
+    }
+  },500);
+}
+
 // 回合結束機制
 var rounds = 10;
 function endTurn(){
@@ -161,4 +201,4 @@ function finish(){
 }
 
 var hero = new Hero("子芸", 130, 30);
-var monster = new Monster("胖胖", 130, 10);
+var monster = new Monster("胖胖", 130, 20);
